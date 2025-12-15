@@ -1,0 +1,101 @@
+[
+  {
+    "accountType": "Dart provisioned",
+    "tenant": "Equities",
+    "team": "Equities",
+    "accountNumber": 767397741621,
+    "type": "Producer (EDP - producer)",
+    "region": "us-east-1",
+    "barclaysOu": "prod",
+    "accountLimit": 1500,
+    "environment": "prod (wide-range IP)",
+    "adGroupCoreRoles": "fGLBEOdspV2edpUAT",
+    "serviceFirstItba": "MKTS_DATA_SCIENCE_PLATFORM",
+    "serviceFirstItbs": "tMKTS_DSP2_EQUITIES *PROD (SNSVC0060888)",
+    "status": "Decom",
+    "accountCategory": "Execution",
+    "access": {
+      "readOnlyAD": "fGLBEOdspV2edpUAT",
+      "writeAD": "Unknown"
+    }
+  },
+  {
+    "accountType": "Dart provisioned",
+    "tenant": "FX",
+    "team": "FX",
+    "accountNumber": 913166597729,
+    "type": "Producer (EDP - producer)",
+    "region": "us-east-1",
+    "barclaysOu": "non-prod",
+    "environment": "UAT (wide-range IP)",
+    "adGroupCoreRoles": "fGLBDSPCoreWS",
+    "serviceFirstItba": "MKTS_DSP_V2_FX",
+    "serviceFirstItbs": "MKTS_DSP_V2_FX *UAT (SNSVC0062492)",
+    "status": "Decom",
+    "accountCategory": "Execution",
+    "access": {
+      "readOnlyAD": "fGLBDSPCoreWS",
+      "writeAD": "Unknown"
+    }
+  },
+  {
+    "accountType": "Dart provisioned",
+    "tenant": "Rates",
+    "team": "Rates Trading",
+    "accountNumber": 123456789012,
+    "type": "Consumer (EDP - consumer)",
+    "region": "eu-west-1",
+    "barclaysOu": "prod",
+    "accountLimit": 2000,
+    "environment": "prod (wide-range IP)",
+    "adGroupCoreRoles": "fGLBRatesCore",
+    "serviceFirstItba": "MKTS_RATES_PLATFORM",
+    "serviceFirstItbs": "tMKTS_RATES_PROD (SNSVC0060901)",
+    "status": "Active",
+    "accountCategory": "Execution",
+    "access": {
+      "readOnlyAD": "fGLBRatesReadOnly",
+      "writeAD": "fGLBRatesWrite"
+    }
+  },
+  {
+    "accountType": "Dart provisioned",
+    "tenant": "Credit",
+    "team": "Credit Trading",
+    "accountNumber": 234567890123,
+    "type": "Producer (EDP - producer)",
+    "region": "us-east-1",
+    "barclaysOu": "non-prod",
+    "accountLimit": 1000,
+    "environment": "DEV (wide-range IP)",
+    "adGroupCoreRoles": "fGLBCreditDev",
+    "serviceFirstItba": "MKTS_CREDIT_DEV",
+    "serviceFirstItbs": "tMKTS_CREDIT_DEV (SNSVC0060902)",
+    "status": "Active",
+    "accountCategory": "Execution",
+    "access": {
+      "readOnlyAD": "fGLBCreditReadOnly",
+      "writeAD": "fGLBCreditWrite"
+    }
+  },
+  {
+    "accountType": "Dart provisioned",
+    "tenant": "Equities",
+    "team": "Equities Analytics",
+    "accountNumber": 345678901234,
+    "type": "Consumer (EDP - consumer)",
+    "region": "ap-southeast-1",
+    "barclaysOu": "prod",
+    "accountLimit": 3000,
+    "environment": "prod (wide-range IP)",
+    "adGroupCoreRoles": "fGLBEQAnalytics",
+    "serviceFirstItba": "MKTS_EQ_ANALYTICS",
+    "serviceFirstItbs": "tMKTS_EQ_ANALYTICS_PROD (SNSVC0060903)",
+    "status": "Active",
+    "accountCategory": "Analytics",
+    "access": {
+      "readOnlyAD": "fGLBEQAnalyticsRead",
+      "writeAD": "fGLBEQAnalyticsWrite"
+    }
+  }
+]
