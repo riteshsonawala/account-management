@@ -23,10 +23,43 @@ app.add_middleware(
 
 DATA_FILE = Path(__file__).parent.parent / "data" / "accounts.json"
 
+# Default values for account fields
+DEFAULT_ACCOUNT_CATEGORY = "Execution"
+
+
+def normalize_account(account: dict) -> dict:
+    """Normalize account data by applying defaults for missing/empty fields."""
+    normalized = account.copy()
+
+    # Default accountCategory to "Execution" if missing or empty
+    if not normalized.get("accountCategory"):
+        normalized["accountCategory"] = DEFAULT_ACCOUNT_CATEGORY
+
+    # Ensure string fields have at least empty string defaults
+    string_fields = [
+        "accountType", "tenant", "team", "type", "region", "barclaysOu",
+        "environment", "adGroupCoreRoles", "serviceFirstItba", "serviceFirstItbs", "status"
+    ]
+    for field in string_fields:
+        if normalized.get(field) is None:
+            normalized[field] = ""
+
+    # Ensure access info exists with defaults
+    if not normalized.get("access"):
+        normalized["access"] = {"readOnlyAD": "", "writeAD": ""}
+    else:
+        if normalized["access"].get("readOnlyAD") is None:
+            normalized["access"]["readOnlyAD"] = ""
+        if normalized["access"].get("writeAD") is None:
+            normalized["access"]["writeAD"] = ""
+
+    return normalized
+
 
 def load_accounts() -> list[dict]:
     with open(DATA_FILE) as f:
-        return json.load(f)
+        accounts = json.load(f)
+    return [normalize_account(a) for a in accounts]
 
 
 @app.get("/")
@@ -94,7 +127,8 @@ def get_account(account_number: int):
 def list_tenants():
     """List all unique tenant names."""
     accounts = load_accounts()
-    tenants = sorted(set(a["tenant"] for a in accounts))
+    # Filter out empty tenant names
+    tenants = sorted(set(a.get("tenant") or "" for a in accounts if a.get("tenant")))
     return tenants
 
 
@@ -107,12 +141,23 @@ def get_stats():
     tenant_counts = {}
     region_counts = {}
     env_counts = {}
+    category_counts = {}
 
     for a in accounts:
-        status_counts[a["status"]] = status_counts.get(a["status"], 0) + 1
-        tenant_counts[a["tenant"]] = tenant_counts.get(a["tenant"], 0) + 1
-        region_counts[a["region"]] = region_counts.get(a["region"], 0) + 1
-        env = a["environment"].split("(")[0].strip()
+        # Handle potentially empty fields with defaults
+        status = a.get("status") or "Unknown"
+        tenant = a.get("tenant") or "Unknown"
+        region = a.get("region") or "Unknown"
+        environment = a.get("environment") or ""
+        category = a.get("accountCategory") or "Execution"
+
+        status_counts[status] = status_counts.get(status, 0) + 1
+        tenant_counts[tenant] = tenant_counts.get(tenant, 0) + 1
+        region_counts[region] = region_counts.get(region, 0) + 1
+        category_counts[category] = category_counts.get(category, 0) + 1
+
+        # Safely parse environment
+        env = environment.split("(")[0].strip() if environment else "Unknown"
         env_counts[env] = env_counts.get(env, 0) + 1
 
     return {
@@ -121,4 +166,5 @@ def get_stats():
         "by_tenant": tenant_counts,
         "by_region": region_counts,
         "by_environment": env_counts,
+        "by_category": category_counts,
     }

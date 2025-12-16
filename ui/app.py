@@ -82,7 +82,9 @@ def render_details_view():
         return
 
     st.title(f"Account Details")
-    st.markdown(f"### {details['tenant']} - {details['accountNumber']}")
+    tenant_display = details.get('tenant') or 'Unknown'
+    account_num_display = details.get('accountNumber', 'N/A')
+    st.markdown(f"### {tenant_display} - {account_num_display}")
 
     st.divider()
 
@@ -92,14 +94,14 @@ def render_details_view():
     with col1:
         st.markdown("#### Basic Information")
         info_data = {
-            "Account Type": details["accountType"],
-            "Account Number": details["accountNumber"],
-            "Tenant": details["tenant"],
-            "Team": details["team"],
-            "Type": details["type"],
-            "Region": details["region"],
-            "Status": details["status"],
-            "Account Category": details["accountCategory"],
+            "Account Type": details.get("accountType") or "N/A",
+            "Account Number": details.get("accountNumber", "N/A"),
+            "Tenant": details.get("tenant") or "N/A",
+            "Team": details.get("team") or "N/A",
+            "Type": details.get("type") or "N/A",
+            "Region": details.get("region") or "N/A",
+            "Status": details.get("status") or "N/A",
+            "Account Category": details.get("accountCategory") or "Execution",
         }
         for key, value in info_data.items():
             st.write(f"**{key}:** {value}")
@@ -107,11 +109,11 @@ def render_details_view():
     with col2:
         st.markdown("#### Configuration")
         config_data = {
-            "Barclays OU": details["barclaysOu"],
-            "Environment": details["environment"],
-            "AD Group Core Roles": details["adGroupCoreRoles"],
-            "Service First ITBA": details["serviceFirstItba"],
-            "Service First ITBS": details["serviceFirstItbs"],
+            "Barclays OU": details.get("barclaysOu") or "N/A",
+            "Environment": details.get("environment") or "N/A",
+            "AD Group Core Roles": details.get("adGroupCoreRoles") or "N/A",
+            "Service First ITBA": details.get("serviceFirstItba") or "N/A",
+            "Service First ITBS": details.get("serviceFirstItbs") or "N/A",
         }
         if details.get("accountLimit"):
             config_data["Account Limit"] = details["accountLimit"]
@@ -123,10 +125,11 @@ def render_details_view():
     # Access Information
     st.markdown("#### Access Information")
     access_col1, access_col2 = st.columns(2)
+    access_info = details.get('access') or {}
     with access_col1:
-        st.write(f"**Read-Only AD:** {details['access']['readOnlyAD']}")
+        st.write(f"**Read-Only AD:** {access_info.get('readOnlyAD') or 'N/A'}")
     with access_col2:
-        st.write(f"**Write AD:** {details['access']['writeAD']}")
+        st.write(f"**Write AD:** {access_info.get('writeAD') or 'N/A'}")
 
 
 def render_list_view():
@@ -204,6 +207,22 @@ def render_list_view():
 
     if accounts:
         df = pd.DataFrame(accounts)
+        # Fill any missing values with defaults
+        df = df.fillna({
+            "accountNumber": 0,
+            "tenant": "N/A",
+            "team": "N/A",
+            "environment": "N/A",
+            "status": "N/A",
+            "region": "N/A",
+            "accountCategory": "Execution",
+        })
+        # Replace empty strings with N/A for display (except accountCategory which defaults to Execution)
+        for col in ["tenant", "team", "environment", "status", "region"]:
+            if col in df.columns:
+                df[col] = df[col].replace("", "N/A")
+        if "accountCategory" in df.columns:
+            df["accountCategory"] = df["accountCategory"].replace("", "Execution")
         df = df.rename(
             columns={
                 "accountNumber": "Account Number",
